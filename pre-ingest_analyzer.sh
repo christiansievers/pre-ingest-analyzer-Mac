@@ -2,6 +2,7 @@
 
 # Initially authored by Franziska Schwab
 # Modularization and current development by Peter Eisner
+# some super simple adaptions for Mac OS by CS
 
 #   Copyright 2021 Technische Informationsbibliothek (TIB)
 #
@@ -63,7 +64,7 @@ if [ -z $id_depth ]
   then
     # determine depth as difference from "input" to "MASTER"
     input_depth=$(echo $input | awk -F '/' '{print NF}')
-    master_depth=$(find $input -type d -name "MASTER" | awk -F '/' '{print NF; exit}')
+    master_depth=$(gfind $input -type d -name "MASTER" | awk -F '/' '{print NF; exit}')
     id_depth=$(expr $master_depth - $input_depth - 1)
 fi
 
@@ -81,7 +82,7 @@ for cmd in "${mandatory_cmds[@]}"
 do
   if ! command -v "$cmd" &> /dev/null
     then
-      echo "WARNING: Could not find mandatory command $cmd."
+      echo "WARNING: Could not gfind mandatory command $cmd."
       peek_in_archives=false
   fi
 done
@@ -107,7 +108,7 @@ function fileNamePolicy {
 #    explicitly allowed characters (NOT ALLOWED).
 # The results from FORBIDDEN are then subtracted from NOT ALLOWED results.
 #
-# You may think of it like this: the first check finds the really bad ones, the
+# You may think of it like this: the first check gfinds the really bad ones, the
 # second check goes for the strange and weird ones which might still be okay.
 
 echo
@@ -115,7 +116,7 @@ echo "-----------------Looking for forbidden characters in file names-----------
 echo
 
 # generate a file list, format as <path><delimiter><filename>
-find "$input" -type f -fprintf "$output"/tmp_files_delimited.txt '%hpr3ttY_un1que_delimiTer%f\n'
+gfind "$input" -type f -fprintf "$output"/tmp_files_delimited.txt '%hpr3ttY_un1que_delimiTer%f\n'
 
 # FIND FORBIDDEN CHARACTERS IN FILE NAMES
 
@@ -228,7 +229,7 @@ echo "-----------------Looking for forbidden characters in folder names---------
 echo
 
 # generate a folder list, format as <path><delimiter><folderame>
-find "$input" -type d -fprintf "$output"/tmp_folders_delimited.txt '%hpr3ttY_un1que_delimiTer%f\n'
+gfind "$input" -type d -fprintf "$output"/tmp_folders_delimited.txt '%hpr3ttY_un1que_delimiTer%f\n'
 
 # FIND FORBIDDEN CHARACTERS IN FOLDER NAMES
 
@@ -341,7 +342,7 @@ echo
 
 # in case of reworking/widening this check: update readme.
 
-find "$input" -iname Thumbs.db -o -name .DS_Store >"$output"/systemdateien.txt
+gfind "$input" -iname Thumbs.db -o -name .DS_Store >"$output"/systemdateien.txt
 
 
 if [ -s "$output"/systemdateien.txt ]
@@ -364,7 +365,7 @@ echo
 echo "-----------------Looking for hidden files and directories-----------------------"
 echo
 
-find "$input" -name ".*" -print >"$output"/hidden_files.txt
+gfind "$input" -name ".*" -print >"$output"/hidden_files.txt
 
 
 if [ -s "$output"/hidden_files.txt ]
@@ -387,7 +388,7 @@ echo
 echo "-----------------Looking for empty files and directories------------------------"
 echo
 
-find "$input" -empty >"$output"/empty.txt
+gfind "$input" -empty >"$output"/empty.txt
 
 
 if [ -s "$output"/empty.txt ]
@@ -416,7 +417,7 @@ echo
 
 # read all directory names into an array.
 
-IFS=$'\n' dirs=( $(find "$input" -mindepth "$SIP_mindepth" -maxdepth "$SIP_maxdepth" -type d -printf "%P\\n") )
+IFS=$'\n' dirs=( $(gfind "$input" -mindepth "$SIP_mindepth" -maxdepth "$SIP_maxdepth" -type d -printf "%P\\n") )
 
 # Following echoes are for testing purpose only.
 # count items in array
@@ -441,13 +442,13 @@ for i in "${dirs[@]}"
       fi
 
 # count number of directories
-    dir_count=$(find "$input" -maxdepth 1 -type d | wc -l)
+    dir_count=$(gfind "$input" -maxdepth 1 -type d | wc -l)
 
 # test if number of directories is not 1
     if [ "$dir_count" -ne 1 ]
       then
         # read directory names into an array
-        IFS=$'\n' check_dir_names=( $(find "$input/$i" -maxdepth 1 -type d -printf "%P\\n") )
+        IFS=$'\n' check_dir_names=( $(gfind "$input/$i" -maxdepth 1 -type d -printf "%P\\n") )
         # echo "${check_dir_names[@]}"
         # print items in array
         for d in "${check_dir_names[@]}"
@@ -468,7 +469,7 @@ for i in "${dirs[@]}"
           # and MODIFIED_MASTER exist
           if [ $check_for_MM = yes ]
             then
-              MASTERfiles_count=$(find "$input/$i/MASTER" -type f | wc -l)
+              MASTERfiles_count=$(gfind "$input/$i/MASTER" -type f | wc -l)
               # test if number of files in MASTER is >1
               if [ "$MASTERfiles_count" -gt 1 ]; then
                 if [ -d "DERIVATIVE_COPY" ]; then
@@ -503,7 +504,7 @@ echo
 echo "-----------------Looking for files bigger than 2 GB-----------------------------"
 echo
 
-find "$input" -size +2G >>"$output"/big_files.txt
+gfind "$input" -size +2G >>"$output"/big_files.txt
 
 
 if [ -s "$output"/big_files.txt ]
@@ -533,7 +534,7 @@ echo
 # MODIFIED_MASTER subdirectories. The results are merged in one report.
 
 # generate file list
-find "$input" -type f -fprint "$output"/tmp_files_without_md5sums.txt
+gfind "$input" -type f -fprint "$output"/tmp_files_without_md5sums.txt
 
 # get number of files to process
 numberOfFiles=$(cat "$output"/tmp_files_without_md5sums.txt | wc -l)
@@ -627,13 +628,13 @@ echo "-----------------Looking for archive files--------------------------------
 echo
 
 # make a list of identifier folders
-find "$input" -maxdepth $id_depth -mindepth $id_depth -type d \
+gfind "$input" -maxdepth $id_depth -mindepth $id_depth -type d \
   > "$output"/tmp_id_folders.txt
 
 numberOfFolders=$(cat "$output"/tmp_id_folders.txt | wc -l)
 numberOfFoldersProcessed=0
 
-# find archives by MIME type, folder by folder
+# gfind archives by MIME type, folder by folder
 
 # this loop takes a while. if one were inclined to optimize this, keep
 # in mind the vast majority of the execution time (like 96 percent-ish)
@@ -642,7 +643,7 @@ numberOfFoldersProcessed=0
 # MIME type of a file, there is no point in fiddling with this.
 while read folder
 do
-  find "$folder" -type f -exec file -F 'pr3ttY_un1que_delimiTer' -i {} \; \
+  gfind "$folder" -type f -exec file -F 'pr3ttY_un1que_delimiTer' -i {} \; \
     | grep -F -f "$piaDir"/search-patterns_archive_mime_types.lst \
     >> "$output"/tmp_archive_files.txt
   numberOfFoldersProcessed=$((numberOfFoldersProcessed +1))
