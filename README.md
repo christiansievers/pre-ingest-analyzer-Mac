@@ -61,8 +61,8 @@ oder die Entfernung praktisch nicht relevanter Typen.
 
 ### System
 
-PIA ist ein BASH-Skript, das auf Linux oder anderen unixoiden Systemen
-ausgeführt werden kann. Produktiv genutzt wird es mit Cygwin und Fedora.
+Diese Version von PIA ist ein BASH-Skript, ~~auf Linux oder anderen unixoiden Systemen
+ausgeführt werden kann. Produktiv genutzt wird es mit Cygwin und Fedora~~ das auf Mac OS Systemen läuft. Voraussetzung ist, dass `homebrew` installiert ist, und benutzt wurde, um die `brew findutils`zu installieren (`brew install findutils`).
 
 Die meisten Funktionen benötigen nur Tools, die auf diesen Systemen in
 der Regel vorhanden sind. Zur Analyse der Inhalte von Archivdateien kann
