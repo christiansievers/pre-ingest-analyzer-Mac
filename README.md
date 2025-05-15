@@ -5,7 +5,9 @@ open for feedback here on GitHub.
 PIA is an interactive shell script that analyzes SIPs before they are ingested
 in the digital preservation system. This allows to fix common mistakes early.
 
-==Anmerkung. Angepasst, um auf Macs laufen zu können. Wenn auf Dateistrukturen angewandt wird, die keine Ordner beinhalten, die "MASTER" im Namen haben, gibt es einige Fehlermeldungen. Um dieses Skript allgemein nützlich zu machen, könnten bei Gelegenheit diese Prüfungen deaktiviert werden. CS==
+
+### Angepasste Version für allgemeine Nutzung auf Mac OS
+_Das Skript wurde angepasst, um auf Macs laufen zu können, siehe Voraussetzungen weiter unten. Wenn es auf Dateistrukturen angewandt wird, die anders als erwartet strukturiert sind, liefern einige Prüfungen Fehlermeldungen. Um dieses Skript außerhalb der TIB nützlich zu machen, könnten bei Gelegenheit diese Prüfungen deaktiviert werden._
 
 
 # P<sub>re</sub> I<sub>ngest</sub> A<sub>nalyzer</sub>
